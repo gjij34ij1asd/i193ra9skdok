@@ -1,0 +1,23 @@
+name: OneBlockCore
+version: '1.0'
+main: me.melonik.oneblockcore.Main
+api-version: '1.19'
+depend: [PlaceholderAPI, Vault]
+commands:
+  is:
+    description: Główna komenda systemu wysp
+    aliases: [island, islands]
+  panel:
+    description: Panel zarządzania wyspą
+    aliases: [is panel]
+  oa:
+    description: Komendy administracyjne
+    permission: oneblock.admin
+  money:
+    description: Zarządzanie ekonomią
+    aliases: [bal, balance]
+  pay:
+    description: Przelew pieniędzy
+  eco:
+    description: Zarządzanie ekonomią (admin)
+    permission: oneblock.admin

@@ -1,0 +1,31 @@
+# OneBlock Core Configuration
+
+island:
+  # Odstęp między wyspami (w blokach)
+  spacing: 800
+  # Wysokość na jakiej tworzone są wyspy
+  height: 64
+  # Początkowy rozmiar bordera
+  initial-border: 100
+  # Maksymalna liczba członków wyspy
+  max-members: 5
+
+generator:
+  # Podstawowy postęp za zniszczenie bloku
+  base-progress: 10
+  # Mnożnik trudności dla kolejnych poziomów
+  level-multiplier: 0.5
+
+economy:
+  # Procent pieniędzy traconych przy śmierci (0.1 = 10%)
+  death-penalty: 0.1
+  # Początkowa ilość pieniędzy przy graczu
+  initial-money: 0.0
+  # Początkowa ilość pieniędzy w banku
+  initial-bank: 0.0
+
+border:
+  # Podstawowy koszt ulepszenia bordera
+  base-cost: 1000.0
+  # Mnożnik kosztu dla kolejnych ulepszeń
+  cost-multiplier: 2.0

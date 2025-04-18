@@ -1,0 +1,149 @@
+package me.melonik.oneblockcore.gui;
+
+import me.melonik.oneblockcore.Main;
+import me.melonik.oneblockcore.models.Island;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+
+public class IslandSettingsGUI implements Listener {
+    private final Main plugin;
+    private final Player player;
+    private final Inventory inventory;
+    private final Island island;
+    private static final int[] BORDER_SLOTS = {0,1,2,3,4,5,6,7,8,9};
+
+    public IslandSettingsGUI(Main plugin, Player player) {
+        this.plugin = plugin;
+        this.player = player;
+        this.island = plugin.getIslandManager().getPlayerIsland(player.getUniqueId());
+        this.inventory = Bukkit.createInventory(null, 27, "§8Ustawienia wyspy");
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        initializeItems();
+    }
+
+    private void initializeItems() {
+        // Ramka GUI
+        for (int slot : BORDER_SLOTS) {
+        }
+
+        // Pora dnia
+        ItemStack timeItem = createItem(Material.CLOCK, "§3Zmiana pory dnia",
+                "§7Aktualnie: " + (island.isAlwaysDay() ? "§aDzień" : "§9Noc"),
+                "",
+                "§7Kliknij aby zmienić porę dnia"
+        );
+        inventory.setItem(11, timeItem);
+
+        // Atakowanie zwierząt
+        ItemStack animalAttackItem = createItem(Material.BEEF, "§3Atakowanie zwierząt",
+                "§7Status: " + (island.isAnimalDamage() ? "§aWłączone" : "§cWyłączone"),
+                "",
+                "§7Kliknij aby " + (island.isAnimalDamage() ? "§cwyłączyć" : "§awłączyć")
+        );
+        inventory.setItem(12, animalAttackItem);
+
+        // Atakowanie mobów
+        ItemStack mobAttackItem = createItem(Material.ZOMBIE_HEAD, "§eAtakowanie mobów",
+                "§7Status: " + (island.isMobDamage() ? "§aWłączone" : "§cWyłączone"),
+                "",
+                "§7Kliknij aby " + (island.isMobDamage() ? "§cwyłączyć" : "§awłączyć")
+        );
+        inventory.setItem(13, mobAttackItem);
+
+        // Odwiedzanie wyspy
+        ItemStack visitItem = createItem(Material.OAK_DOOR, "§3Odwiedzanie wyspy",
+                "§7Status: " + (island.isVisitable() ? "§aWłączone" : "§cWyłączone"),
+                "",
+                "§7Kliknij aby " + (island.isVisitable() ? "§cwyłączyć" : "§awłączyć")
+        );
+        inventory.setItem(14, visitItem);
+
+        // Podnoszenie itemów
+        ItemStack pickupItem = createItem(Material.HOPPER, "§3Podnoszenie przedmiotów",
+                "§7Status: " + (island.isPickupItems() ? "§aWłączone" : "§cWyłączone"),
+                "",
+                "§7Kliknij aby " + (island.isPickupItems() ? "§cwyłączyć" : "§awłączyć")
+        );
+        inventory.setItem(15, pickupItem);
+
+        // Przycisk powrotu
+        ItemStack backButton = createItem(Material.PAPER, "§cPowrót!",
+                "§7Kliknij, aby wrócić do panelu wyspy"
+        );
+
+        ItemMeta meta = backButton.getItemMeta();
+        if (meta != null) {
+            meta.setCustomModelData(9996);
+            backButton.setItemMeta(meta);
+        }
+
+        inventory.setItem(22, backButton);
+    }
+
+    private ItemStack createItem(Material material, String name, String... lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(Arrays.asList(lore));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!event.getInventory().equals(inventory)) return;
+        event.setCancelled(true);
+
+        if (!island.getOwnerId().equals(player.getUniqueId())) {
+            player.sendMessage("§cTylko właściciel wyspy może zmieniać ustawienia!");
+            player.closeInventory();
+            return;
+        }
+
+        ItemStack clicked = event.getCurrentItem();
+        if (clicked == null || clicked.getType() == Material.BLACK_STAINED_GLASS_PANE) return;
+
+        switch (event.getSlot()) {
+            case 11: // Pora dnia
+                island.setAlwaysDay(!island.isAlwaysDay());
+                // Wysyłamy nowy czas tylko do graczy na wyspie
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (island.isOnIsland(p)) {
+                        p.setPlayerTime(island.isAlwaysDay() ? 6000 : 18000, false);
+                    }
+                }
+                break;
+            case 12: // Atakowanie zwierząt
+                island.setAnimalDamage(!island.isAnimalDamage());
+                break;
+            case 13: // Atakowanie mobów
+                island.setMobDamage(!island.isMobDamage());
+                break;
+            case 14: // Odwiedzanie
+                island.setVisitable(!island.isVisitable());
+                break;
+            case 15: // Podnoszenie itemów
+                island.setPickupItems(!island.isPickupItems());
+                break;
+            case 22: // Powrót
+                new IslandPanelGUI(plugin, player).open();
+                return;
+        }
+
+        plugin.getIslandManager().saveIslands();
+        initializeItems();
+    }
+
+    public void open() {
+        player.openInventory(inventory);
+    }
+}
