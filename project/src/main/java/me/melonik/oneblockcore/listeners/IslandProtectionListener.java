@@ -28,7 +28,6 @@ public class IslandProtectionListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        // Sprawdź czy blok jest w świecie wysp
         if (!block.getWorld().getName().equals("oneblock")) {
             return;
         }
@@ -36,11 +35,10 @@ public class IslandProtectionListener implements Listener {
         Island island = plugin.getIslandManager().getIslandAt(block.getLocation());
         if (island == null) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz niszczyć bloków poza wyspą!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz niszczyć bloków poza wyspą!", 10, 40, 20);
             return;
         }
 
-        // Jeśli gracz jest właścicielem wyspy, pozwól mu na wszystko
         if (island.getOwnerId().equals(player.getUniqueId())) {
             if (block.getType() == Material.HOPPER) {
                 island.getUpgrades().decrementHopperCount();
@@ -48,14 +46,12 @@ public class IslandProtectionListener implements Listener {
             return;
         }
 
-        // Jeśli gracz nie jest członkiem ani coopem
         if (!island.getMembers().contains(player.getUniqueId()) && !island.getCoopPlayers().contains(player.getUniqueId())) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz niszczyć bloków na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz niszczyć bloków na tej wyspie!", 10, 40, 20);
             return;
         }
 
-        // Sprawdź uprawnienia dla członków i coopów
         String permission = "BREAK";
         if (block.getType() == Material.BEACON) {
             permission = "BEACON_BREAK";
@@ -65,7 +61,7 @@ public class IslandProtectionListener implements Listener {
 
         if (!island.hasPermission(player.getUniqueId(), permission)) {
             event.setCancelled(true);
-            player.sendMessage("§cNie masz uprawnień do niszczenia na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie masz permisji do niszczenia bloków na tej wyspie!", 10, 40, 20);
         }
     }
 
@@ -74,7 +70,6 @@ public class IslandProtectionListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        // Sprawdź czy blok jest w świecie wysp
         if (!block.getWorld().getName().equals("oneblock")) {
             return;
         }
@@ -82,11 +77,10 @@ public class IslandProtectionListener implements Listener {
         Island island = plugin.getIslandManager().getIslandAt(block.getLocation());
         if (island == null) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz stawiać bloków poza wyspą!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz stawiać bloków poza wyspą!", 10, 40, 20);
             return;
         }
 
-        // Sprawdź limity bloków
         boolean exceedsLimit = false;
         String limitMessage = "";
 
@@ -117,13 +111,11 @@ public class IslandProtectionListener implements Listener {
 
         if (exceedsLimit) {
             event.setCancelled(true);
-            player.sendMessage("§cOsiągnięto limit " + limitMessage + " na tej wyspie!");
+            player.sendTitle("§4§lBłąd!","§cOsiągnięto limit §e" + limitMessage + "§c na tej wyspie!", 10, 40, 20);
             return;
         }
 
-        // Jeśli gracz jest właścicielem wyspy, pozwól mu na wszystko
         if (island.getOwnerId().equals(player.getUniqueId())) {
-            // Aktualizuj liczniki po postawieniu bloku
             switch (block.getType()) {
                 case HOPPER:
                     island.getUpgrades().incrementHopperCount();
@@ -132,10 +124,9 @@ public class IslandProtectionListener implements Listener {
             return;
         }
 
-        // Jeśli gracz nie jest członkiem ani coopem
         if (!island.getMembers().contains(player.getUniqueId()) && !island.getCoopPlayers().contains(player.getUniqueId())) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz stawiać bloków na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie masz permisji do stawiania bloków na tej wyspie!", 10, 40, 20);
             return;
         }
 
@@ -146,7 +137,7 @@ public class IslandProtectionListener implements Listener {
 
         if (!island.hasPermission(player.getUniqueId(), permission)) {
             event.setCancelled(true);
-            player.sendMessage("§cNie masz uprawnień do budowania na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie masz permisji do budowania na tej wyspie!", 10, 40, 20);
         }
     }
 
@@ -158,7 +149,6 @@ public class IslandProtectionListener implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        // Sprawdź czy blok jest w świecie wysp
         if (!block.getWorld().getName().equals("oneblock")) {
             return;
         }
@@ -166,19 +156,17 @@ public class IslandProtectionListener implements Listener {
         Island island = plugin.getIslandManager().getIslandAt(block.getLocation());
         if (island == null) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz wchodzić w interakcję z blokami poza wyspą!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz wchodzić w interakcje poza wyspą!", 10, 40, 20);
             return;
         }
 
-        // Jeśli gracz jest właścicielem wyspy, pozwól mu na wszystko
         if (island.getOwnerId().equals(player.getUniqueId())) {
             return;
         }
 
-        // Jeśli gracz nie jest członkiem ani coopem
         if (!island.getMembers().contains(player.getUniqueId()) && !island.getCoopPlayers().contains(player.getUniqueId())) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz wchodzić w interakcję z blokami na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz wchodzić w interakcje z blokami na tej wyspie!", 10, 40, 20);
             return;
         }
 
@@ -203,7 +191,7 @@ public class IslandProtectionListener implements Listener {
 
         if (permission != null && !island.hasPermission(player.getUniqueId(), permission)) {
             event.setCancelled(true);
-            player.sendMessage("§cNie masz uprawnień do używania tego na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz tego używać na tej wyspie!", 10, 40, 20);
         }
     }
 
@@ -213,7 +201,6 @@ public class IslandProtectionListener implements Listener {
 
         Player player = (Player) event.getDamager();
 
-        // Sprawdź czy encja jest w świecie wysp
         if (!event.getEntity().getWorld().getName().equals("oneblock")) {
             return;
         }
@@ -221,19 +208,17 @@ public class IslandProtectionListener implements Listener {
         Island island = plugin.getIslandManager().getIslandAt(event.getEntity().getLocation());
         if (island == null) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz atakować mobów poza wyspą!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz atakować mobów poza wyspą!", 10, 40, 20);
             return;
         }
 
-        // Jeśli gracz jest właścicielem wyspy, pozwól mu na wszystko
         if (island.getOwnerId().equals(player.getUniqueId())) {
             return;
         }
 
-        // Jeśli gracz nie jest członkiem ani coopem
         if (!island.getMembers().contains(player.getUniqueId()) && !island.getCoopPlayers().contains(player.getUniqueId())) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz atakować mobów na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz atakować mobów na tej wyspie!", 10, 40, 20);
             return;
         }
 
@@ -246,7 +231,7 @@ public class IslandProtectionListener implements Listener {
 
         if (permission != null && !island.hasPermission(player.getUniqueId(), permission)) {
             event.setCancelled(true);
-            player.sendMessage("§cNie masz uprawnień do atakowania na tej wyspie!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz permisji do atakowania na tej wyspie!", 10, 40, 20);
         }
     }
 }

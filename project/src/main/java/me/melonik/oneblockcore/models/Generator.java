@@ -1,20 +1,30 @@
 package me.melonik.oneblockcore.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Generator {
     private int level;
-    private int progress;
+    private Map<Integer, Integer> levelProgress;
     private double moneyPerSecond;
     private int scrafCount;
     private long lastUpdate;
     private int selectedGeneratorLevel;
+    private long lastScrafRemoval;
 
     public Generator() {
         this.level = 1;
-        this.progress = 0;
+        this.levelProgress = new HashMap<>();
         this.moneyPerSecond = 1.0;
         this.scrafCount = 0;
         this.lastUpdate = System.currentTimeMillis();
         this.selectedGeneratorLevel = 1;
+        this.lastScrafRemoval = System.currentTimeMillis();
+
+        // Inicjalizacja progresu dla wszystkich poziomów
+        for (int i = 1; i <= 7; i++) {
+            levelProgress.put(i, 0);
+        }
     }
 
     public int getLevel() {
@@ -26,11 +36,27 @@ public class Generator {
     }
 
     public int getProgress() {
-        return progress;
+        return levelProgress.getOrDefault(selectedGeneratorLevel, 0);
     }
 
     public void setProgress(int progress) {
-        this.progress = progress;
+        levelProgress.put(selectedGeneratorLevel, progress);
+    }
+
+    public int getProgressForLevel(int level) {
+        return levelProgress.getOrDefault(level, 0);
+    }
+
+    public void setProgressForLevel(int level, int progress) {
+        levelProgress.put(level, progress);
+    }
+
+    public Map<Integer, Integer> getLevelProgress() {
+        return levelProgress;
+    }
+
+    public void setLevelProgress(Map<Integer, Integer> levelProgress) {
+        this.levelProgress = levelProgress;
     }
 
     public double getMoneyPerSecond() {
@@ -83,5 +109,23 @@ public class Generator {
 
     public void setSelectedGeneratorLevel(int selectedGeneratorLevel) {
         this.selectedGeneratorLevel = selectedGeneratorLevel;
+    }
+
+    public long getLastScrafRemoval() {
+        return lastScrafRemoval;
+    }
+
+    public void setLastScrafRemoval(long lastScrafRemoval) {
+        this.lastScrafRemoval = lastScrafRemoval;
+    }
+
+    public void checkAndRemoveScrafs() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastScrafRemoval >= 1000) {
+            if (scrafCount > 0) {
+                removeScraf(1);
+            }
+            lastScrafRemoval = currentTime;
+        }
     }
 }

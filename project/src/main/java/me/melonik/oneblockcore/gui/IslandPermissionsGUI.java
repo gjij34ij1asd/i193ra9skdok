@@ -35,12 +35,10 @@ public class IslandPermissionsGUI implements Listener {
         Island island = plugin.getIslandManager().getPlayerIsland(player.getUniqueId());
         if (island == null) return;
 
-        // Ramka GUI
         for (int slot : BORDER_SLOTS) {
 
         }
 
-        // Uprawnienia
         addPermissionItem(10, Material.GRASS_BLOCK, "Stawianie bloków", island.hasPermission(targetUUID, "BUILD"));
         addPermissionItem(11, Material.DIAMOND_PICKAXE, "Niszczenie bloków", island.hasPermission(targetUUID, "BREAK"));
         addPermissionItem(12, Material.CHEST, "Otwieranie skrzynek", island.hasPermission(targetUUID, "CHEST"));

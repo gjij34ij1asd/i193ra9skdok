@@ -38,14 +38,22 @@ public class AdminCommand implements CommandExecutor {
                 break;
             case "setowner":
                 if (args.length < 3) {
-                    sender.sendMessage("§cUżyj: /oa setowner <gracz> <nowy_właściciel>");
+                    sender.sendMessage("§8» §3Komendy admina na oneblock");
+                    sender.sendMessage("§8» §b/oa delete <gracz> §7- Usuwa wyspę gracza");
+                    sender.sendMessage("§8» §b/oa kick <gracz> §7- Wyrzuca gracza z wyspy");
+                    sender.sendMessage("§8» §b/oa setowner <gracz> <nowy właściciel> §7- Zmienia właściciela wyspy");
+                    sender.sendMessage("§8» §b/oa addmoney <gracz> <ilość> §7- Dodaje pieniądze graczowi");
                     return true;
                 }
                 setOwner(sender, args[1], args[2]);
                 break;
             case "addmoney":
                 if (args.length < 3) {
-                    sender.sendMessage("§cUżyj: /oa addmoney <gracz> <ilość>");
+                    sender.sendMessage("§8» §3Komendy admina na oneblock");
+                    sender.sendMessage("§8» §b/oa delete <gracz> §7- Usuwa wyspę gracza");
+                    sender.sendMessage("§8» §b/oa kick <gracz> §7- Wyrzuca gracza z wyspy");
+                    sender.sendMessage("§8» §b/oa setowner <gracz> <nowy właściciel> §7- Zmienia właściciela wyspy");
+                    sender.sendMessage("§8» §b/oa addmoney <gracz> <ilość> §7- Dodaje pieniądze graczowi");
                     return true;
                 }
                 addMoney(sender, args[1], args[2]);
@@ -59,52 +67,52 @@ public class AdminCommand implements CommandExecutor {
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage("§6=== OneBlock Admin - Pomoc ===");
-        sender.sendMessage("§e/oa delete <gracz> §7- Usuwa wyspę gracza");
-        sender.sendMessage("§e/oa kick <gracz> §7- Wyrzuca gracza z wyspy");
-        sender.sendMessage("§e/oa setowner <gracz> <nowy_właściciel> §7- Zmienia właściciela wyspy");
-        sender.sendMessage("§e/oa addmoney <gracz> <ilość> §7- Dodaje pieniądze graczowi");
+        sender.sendMessage("§8» §3Komendy admina na OneBlock");
+        sender.sendMessage("§8» §b/oa delete <gracz> §7- Usuwa wyspę gracza");
+        sender.sendMessage("§8» §b/oa kick <gracz> §7- Wyrzuca gracza z wyspy");
+        sender.sendMessage("§8» §b/oa setowner <gracz> <nowy właściciel> §7- Zmienia właściciela wyspy");
+        sender.sendMessage("§8» §b/oa addmoney <gracz> <ilość> §7- Dodaje pieniądze graczowi");
     }
 
     private void deleteIsland(CommandSender sender, String playerName) {
         Player target = Bukkit.getPlayer(playerName);
         if (target == null) {
-            sender.sendMessage("§cGracz nie jest online!");
+            sender.sendMessage("§8» §cGracz nie jest online!");
             return;
         }
 
         Island island = plugin.getIslandManager().getPlayerIsland(target.getUniqueId());
         if (island == null) {
-            sender.sendMessage("§cTen gracz nie posiada wyspy!");
+            sender.sendMessage("§8» §cTen gracz nie posiada wyspy!");
             return;
         }
 
         plugin.getIslandManager().deleteIsland(island.getIslandId());
-        sender.sendMessage("§aUsunięto wyspę gracza " + target.getName());
-        target.sendMessage("§cTwoja wyspa została usunięta przez administratora!");
+        sender.sendMessage("§8» §aUsunięto wyspę gracza " + target.getName());
+        target.sendMessage("§8» §cTwoja wyspa została usunięta przez administratora!");
     }
 
     private void kickPlayer(CommandSender sender, String playerName) {
         Player target = Bukkit.getPlayer(playerName);
         if (target == null) {
-            sender.sendMessage("§cGracz nie jest online!");
+            sender.sendMessage("§8» §cGracz nie jest online!");
             return;
         }
 
         Island island = plugin.getIslandManager().getPlayerIsland(target.getUniqueId());
         if (island == null) {
-            sender.sendMessage("§cTen gracz nie należy do żadnej wyspy!");
+            sender.sendMessage("§8» §cTen gracz nie należy do żadnej wyspy!");
             return;
         }
 
         if (island.getOwnerId().equals(target.getUniqueId())) {
-            sender.sendMessage("§cNie możesz wyrzucić właściciela wyspy!");
+            sender.sendMessage("§8» §cNie możesz wyrzucić właściciela wyspy!");
             return;
         }
 
         plugin.getIslandManager().removeMember(island.getIslandId(), target.getUniqueId());
-        sender.sendMessage("§aWyrzucono gracza " + target.getName() + " z wyspy!");
-        target.sendMessage("§cZostałeś wyrzucony z wyspy przez administratora!");
+        sender.sendMessage("§8» §aWyrzucono gracza " + target.getName() + " z wyspy!");
+        target.sendMessage("§8» §cZostałeś wyrzucony z wyspy przez administratora!");
         target.teleport(target.getWorld().getSpawnLocation());
     }
 
@@ -113,17 +121,16 @@ public class AdminCommand implements CommandExecutor {
         Player newOwner = Bukkit.getPlayer(newOwnerName);
 
         if (currentOwner == null || newOwner == null) {
-            sender.sendMessage("§cJeden z graczy nie jest online!");
+            sender.sendMessage("§8» §cJeden z graczy nie jest online!");
             return;
         }
 
         Island island = plugin.getIslandManager().getPlayerIsland(currentOwner.getUniqueId());
         if (island == null) {
-            sender.sendMessage("§cTen gracz nie posiada wyspy!");
+            sender.sendMessage("§8» §cTen gracz nie posiada wyspy!");
             return;
         }
 
-        // Zmiana właściciela
         UUID oldOwnerId = island.getOwnerId();
         island.getMembers().remove(oldOwnerId);
         island.getMembers().add(newOwner.getUniqueId());
@@ -131,30 +138,30 @@ public class AdminCommand implements CommandExecutor {
 
         plugin.getIslandManager().saveIslands();
 
-        sender.sendMessage("§aZmieniono właściciela wyspy z " + currentOwner.getName() + " na " + newOwner.getName());
-        currentOwner.sendMessage("§cNie jesteś już właścicielem wyspy!");
-        newOwner.sendMessage("§aZostałeś nowym właścicielem wyspy!");
+        sender.sendMessage("§8» §aZmieniono właściciela wyspy z " + currentOwner.getName() + " na " + newOwner.getName());
+        currentOwner.sendMessage("§8» §cNie jesteś już właścicielem wyspy!");
+        newOwner.sendMessage("§8» §aZostałeś nowym właścicielem wyspy!");
     }
 
     private void addMoney(CommandSender sender, String playerName, String amountStr) {
         Player target = Bukkit.getPlayer(playerName);
         if (target == null) {
-            sender.sendMessage("§cGracz nie jest online!");
+            sender.sendMessage("§8» §cGracz nie jest online!");
             return;
         }
 
         try {
             double amount = Double.parseDouble(amountStr);
             if (amount <= 0) {
-                sender.sendMessage("§cKwota musi być większa od 0!");
+                sender.sendMessage("§8» §cKwota musi być większa od 0!");
                 return;
             }
 
             plugin.getEconomyManager().addPlayerMoney(target.getUniqueId(), amount);
-            sender.sendMessage("§aDodano §6$" + amount + " §adla gracza " + target.getName());
-            target.sendMessage("§aOtrzymałeś §6$" + amount + " §aod administratora!");
+            sender.sendMessage("§8» §aDodano §6$" + amount + " §adla gracza " + target.getName());
+            target.sendMessage("§8» §aOtrzymałeś §6$" + amount + " §aod administratora!");
         } catch (NumberFormatException e) {
-            sender.sendMessage("§cNieprawidłowa kwota!");
+            sender.sendMessage("§8» §cNieprawidłowa kwota!");
         }
     }
 }

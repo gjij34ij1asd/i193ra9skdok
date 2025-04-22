@@ -68,7 +68,6 @@ public class ConfigManager {
         return config;
     }
 
-    // Gettery dla często używanych wartości
     public int getIslandSpacing() {
         return config.getInt("island.spacing", 800);
     }

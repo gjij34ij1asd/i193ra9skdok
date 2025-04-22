@@ -17,16 +17,15 @@ public class PanelCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cTa komenda jest dostępna tylko dla graczy!");
+            sender.sendMessage("§8» §cTa komenda jest dostępna tylko dla graczy!");
             return true;
         }
 
         if (!plugin.getIslandManager().hasIsland(player.getUniqueId())) {
-            player.sendMessage("§cNie posiadasz wyspy!");
+            player.sendMessage("§8» §cNie posiadasz wyspy!");
             return true;
         }
 
-        // Otwórz GUI panelu
         new IslandPanelGUI(plugin, player).open();
         return true;
     }

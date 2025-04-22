@@ -31,7 +31,6 @@ public class PlayerInteractListener implements Listener {
         if (island != null && block.getLocation().equals(island.getCenter())) {
             event.setCancelled(true);
 
-            // Sprawdź czy blok jest generatorem (GRASS_BLOCK dla poziomu 1 lub BLAST_FURNACE dla poziomu 7)
             Material blockType = block.getType();
             if (blockType == Material.BLAST_FURNACE) {
 
@@ -39,7 +38,7 @@ public class PlayerInteractListener implements Listener {
                         island.hasPermission(player.getUniqueId(), "GENERATOR")) {
                     new GeneratorGUI(plugin, player, island).open();
                 } else {
-                    player.sendMessage("§cNie masz uprawnień do używania generatora!");
+                    player.sendTitle("§4§lBłąd!", "§cNie masz permisji do używania generatora!", 10, 40, 20);
                 }
             }
         }

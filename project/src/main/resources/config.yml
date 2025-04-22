@@ -4,7 +4,7 @@ island:
   # Odstęp między wyspami (w blokach)
   spacing: 800
   # Wysokość na jakiej tworzone są wyspy
-  height: 64
+  height: 100
   # Początkowy rozmiar bordera
   initial-border: 100
   # Maksymalna liczba członków wyspy

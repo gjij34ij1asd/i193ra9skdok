@@ -37,61 +37,54 @@ public class IslandUpgradesGUI implements Listener {
         Island island = plugin.getIslandManager().getPlayerIsland(player.getUniqueId());
         if (island == null) return;
 
-        // Ramka GUI
         for (int slot : BORDER_SLOTS) {
         }
 
-        // Border
-        ItemStack borderItem = createItem(Material.IRON_BARS, "§6Border wyspy",
+        ItemStack borderItem = createItem(Material.IRON_BARS, "§3Border wyspy",
                 "§7Obecny rozmiar: §f" + island.getBorderSize() + "x" + island.getBorderSize(),
                 "§7Następny rozmiar: §f" + IslandUpgrades.getNextBorderSize(island.getBorderSize()) + "x" + IslandUpgrades.getNextBorderSize(island.getBorderSize()),
                 "§7Koszt ulepszenia: §f$" + IslandUpgrades.getBorderUpgradeCost(island.getBorderSize()),
                 "",
-                IslandUpgrades.getBorderUpgradeCost(island.getBorderSize()) > 0 ? "§eKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
+                IslandUpgrades.getBorderUpgradeCost(island.getBorderSize()) > 0 ? "§bKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
         );
         inventory.setItem(11, borderItem);
 
-        // Spawnery
-        ItemStack spawnerItem = createItem(Material.SPAWNER, "§6Limit spawnerów",
+        ItemStack spawnerItem = createItem(Material.SPAWNER, "§3Limit spawnerów",
                 "§7Obecny limit: §f" + island.getUpgrades().getSpawnerLimit(),
                 "§7Następny limit: §f" + IslandUpgrades.getNextSpawnerLimit(island.getUpgrades().getSpawnerLimit()),
                 "§7Koszt ulepszenia: §f$" + IslandUpgrades.getSpawnerUpgradeCost(island.getUpgrades().getSpawnerLimit()),
                 "",
-                IslandUpgrades.getSpawnerUpgradeCost(island.getUpgrades().getSpawnerLimit()) > 0 ? "§eKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
+                IslandUpgrades.getSpawnerUpgradeCost(island.getUpgrades().getSpawnerLimit()) > 0 ? "§bKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
         );
         inventory.setItem(12, spawnerItem);
 
-        // Lejki
-        ItemStack hopperItem = createItem(Material.HOPPER, "§6Limit lejków",
+        ItemStack hopperItem = createItem(Material.HOPPER, "§3Limit lejków",
                 "§7Obecny limit: §f" + island.getUpgrades().getHopperLimit(),
                 "§7Następny limit: §f" + IslandUpgrades.getNextHopperLimit(island.getUpgrades().getHopperLimit()),
                 "§7Koszt ulepszenia: §f$" + IslandUpgrades.getHopperUpgradeCost(island.getUpgrades().getHopperLimit()),
                 "",
-                IslandUpgrades.getHopperUpgradeCost(island.getUpgrades().getHopperLimit()) > 0 ? "§eKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
+                IslandUpgrades.getHopperUpgradeCost(island.getUpgrades().getHopperLimit()) > 0 ? "§bKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
         );
         inventory.setItem(13, hopperItem);
 
-        // Członkowie
-        ItemStack memberItem = createItem(Material.PLAYER_HEAD, "§6Limit członków",
+        ItemStack memberItem = createItem(Material.PLAYER_HEAD, "§3Limit członków",
                 "§7Obecny limit: §f" + island.getUpgrades().getMemberLimit(),
                 "§7Następny limit: §f" + IslandUpgrades.getNextMemberLimit(island.getUpgrades().getMemberLimit()),
                 "§7Koszt ulepszenia: §f$" + IslandUpgrades.getMemberUpgradeCost(island.getUpgrades().getMemberLimit()),
                 "",
-                IslandUpgrades.getMemberUpgradeCost(island.getUpgrades().getMemberLimit()) > 0 ? "§eKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
+                IslandUpgrades.getMemberUpgradeCost(island.getUpgrades().getMemberLimit()) > 0 ? "§bKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
         );
         inventory.setItem(14, memberItem);
 
-        // Pistony
-        ItemStack pistonItem = createItem(Material.PISTON, "§6Limit pistonów",
+        ItemStack pistonItem = createItem(Material.PISTON, "§3Limit tłoków",
                 "§7Obecny limit: §f" + island.getUpgrades().getPistonLimit(),
                 "§7Następny limit: §f" + IslandUpgrades.getNextPistonLimit(island.getUpgrades().getPistonLimit()),
                 "§7Koszt ulepszenia: §f$" + IslandUpgrades.getPistonUpgradeCost(island.getUpgrades().getPistonLimit()),
                 "",
-                IslandUpgrades.getPistonUpgradeCost(island.getUpgrades().getPistonLimit()) > 0 ? "§eKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
+                IslandUpgrades.getPistonUpgradeCost(island.getUpgrades().getPistonLimit()) > 0 ? "§bKliknij, aby ulepszyć" : "§cOsiągnięto maksymalny poziom"
         );
         inventory.setItem(15, pistonItem);
 
-        // Przycisk powrotu
         ItemStack backButton = createItem(Material.PAPER, "§cPowrót!",
                 "§7Kliknij, aby wrócić do panelu wyspy"
         );
@@ -124,7 +117,7 @@ public class IslandUpgradesGUI implements Listener {
         if (island == null) return;
 
         if (!island.getOwnerId().equals(player.getUniqueId())) {
-            player.sendMessage("§cTylko właściciel wyspy może korzystać z ulepszeń!");
+            player.sendTitle("§4§lBłąd!", "§cTylko właściciel wyspy może korzystać z ulepszeń!", 10, 40, 20);
             player.closeInventory();
             return;
         }
@@ -135,32 +128,27 @@ public class IslandUpgradesGUI implements Listener {
 
         int slot = event.getSlot();
 
-        // Jeśli kliknięto przycisk powrotu
         if (slot == 22) {
             new IslandPanelGUI(plugin, player).open();
             return;
         }
 
-        // Sprawdź czy slot jest prawidłowy dla ulepszeń
         if (slot < 11 || slot > 15) return;
 
-        // Jeśli już wyświetlamy wskaźnik braku pieniędzy, przenieś go do nowego slotu
         if (currentNoMoneySlot != -1) {
-            // Przywróć oryginalny item w poprzednim slocie
             initializeItems();
         }
 
         double cost = getUpgradeCost(island, slot);
         if (cost <= 0) {
-            player.sendMessage("§cOsiągnięto maksymalny poziom!");
+            player.sendTitle("§4§lBłąd!", "§cOsiągnieto maksymalny poziom ulepszenia!", 10, 40, 20);
+            player.closeInventory();
             return;
         }
 
         if (plugin.getEconomyManager().getPlayerMoney(player.getUniqueId()) < cost) {
-            // Zapisz aktualny slot ze wskaźnikiem
             currentNoMoneySlot = slot;
 
-            // Pokaż wskaźnik braku pieniędzy
             ItemStack noMoneyItem = new ItemStack(Material.PAPER);
             ItemMeta meta = noMoneyItem.getItemMeta();
             meta.setDisplayName("§cNie stać Cię na to!");
@@ -197,23 +185,27 @@ public class IslandUpgradesGUI implements Listener {
         switch (slot) {
             case 11:
                 island.setBorderSize(IslandUpgrades.getNextBorderSize(island.getBorderSize()));
-                player.sendMessage("§aUlepszono rozmiar bordera!");
+                player.sendTitle("§2§lSuckes!", "§aPowiększyłeś border wyspy!", 10, 40, 20);
+                player.closeInventory();
                 break;
             case 12:
                 island.getUpgrades().setSpawnerLimit(IslandUpgrades.getNextSpawnerLimit(island.getUpgrades().getSpawnerLimit()));
-                player.sendMessage("§aUlepszono limit spawnerów!");
+                player.sendTitle("§2§lSuckes!", "§aUlepszyłeś limit spawnerów!", 10, 40, 20);
                 break;
             case 13:
                 island.getUpgrades().setHopperLimit(IslandUpgrades.getNextHopperLimit(island.getUpgrades().getHopperLimit()));
-                player.sendMessage("§aUlepszono limit lejków!");
+                player.sendTitle("§2§lSuckes!", "§aUlepszyłeś limit lejków!", 10, 40, 20);
+                player.closeInventory();
                 break;
             case 14:
                 island.getUpgrades().setMemberLimit(IslandUpgrades.getNextMemberLimit(island.getUpgrades().getMemberLimit()));
-                player.sendMessage("§aUlepszono limit członków!");
+                player.sendTitle("§2§lSuckes!", "§aUlepszyłeś limit członków!", 10, 40, 20);
+                player.closeInventory();
                 break;
             case 15:
                 island.getUpgrades().setPistonLimit(IslandUpgrades.getNextPistonLimit(island.getUpgrades().getPistonLimit()));
-                player.sendMessage("§aUlepszono limit pistonów!");
+                player.sendTitle("§2§lSuckes!", "§aUlepszyłeś limit tłoków!", 10, 40, 20);
+                player.closeInventory();
                 break;
         }
 

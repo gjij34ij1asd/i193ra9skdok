@@ -37,15 +37,14 @@ public class SpawnerListener implements Listener {
         if (!island.getOwnerId().equals(player.getUniqueId()) &&
                 !island.hasPermission(player.getUniqueId(), "SPAWNER_MANAGE")) {
             event.setCancelled(true);
-            player.sendMessage("§cNie masz uprawnień do stawiania spawnerów!");
+            player.sendTitle("§4§lBłąd!", "§cNie masz permisji do stawiania spawnerów!", 10, 40, 20);
             return;
         }
 
-        // Sprawdź limit spawnerów
         int currentSpawners = plugin.getSpawnerManager().getSpawners().size();
         if (currentSpawners >= island.getUpgrades().getSpawnerLimit()) {
             event.setCancelled(true);
-            player.sendMessage("§cOsiągnięto maksymalny limit spawnerów na wyspie! §7(" + currentSpawners + "/" + island.getUpgrades().getSpawnerLimit() + ")");
+            player.sendTitle("§4§lBłąd!","§cOsiągnięto maksymalny limit spawnerów na wyspie! §7(" + currentSpawners + "/" + island.getUpgrades().getSpawnerLimit() + ")",10,40,20);
             return;
         }
 
@@ -65,16 +64,15 @@ public class SpawnerListener implements Listener {
         if (!island.getOwnerId().equals(player.getUniqueId()) &&
                 !island.hasPermission(player.getUniqueId(), "SPAWNER_MANAGE")) {
             event.setCancelled(true);
-            player.sendMessage("§cNie masz uprawnień do niszczenia spawnerów!");
+            player.sendTitle("§4§lBłąd!", "§cNie masz permisji do niszczenia spawnerów!", 10, 40, 20);
             return;
         }
 
         plugin.getSpawnerManager().removeSpawner(block.getLocation());
 
-        // Drop pustego spawnera
         ItemStack spawner = new ItemStack(Material.SPAWNER);
         ItemMeta meta = spawner.getItemMeta();
-        meta.setDisplayName("§6Pusty Spawner");
+        meta.setDisplayName("§bPusty Spawner");
         spawner.setItemMeta(meta);
 
         event.setDropItems(false);
@@ -90,7 +88,6 @@ public class SpawnerListener implements Listener {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
-        // Anuluj interakcję jajkami spawnera
         if (item != null && item.getType().name().endsWith("_SPAWN_EGG")) {
             event.setCancelled(true);
             return;
@@ -102,7 +99,7 @@ public class SpawnerListener implements Listener {
         if (!island.getOwnerId().equals(player.getUniqueId()) &&
                 !island.hasPermission(player.getUniqueId(), "SPAWNER_SETTINGS")) {
             event.setCancelled(true);
-            player.sendMessage("§cNie masz uprawnień do zarządzania spawnerami!");
+            player.sendTitle("§4§lBłąd!", "§cNie masz permisji do zarządzania spawnerami!", 10, 40, 20);
             return;
         }
 

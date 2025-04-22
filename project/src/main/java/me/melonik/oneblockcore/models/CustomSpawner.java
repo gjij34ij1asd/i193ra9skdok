@@ -76,7 +76,7 @@ public class CustomSpawner {
     }
 
     public long getSpawnDelay() {
-        return 60000L / getMobsPerMinute(); // Przeliczamy moby/minutę na milisekundy między respami
+        return 60000L / getMobsPerMinute();
     }
 
     public static int getSpeedUpgradeCost(int currentLevel) {

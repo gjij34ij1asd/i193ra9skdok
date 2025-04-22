@@ -21,7 +21,7 @@ public class GeneratorGUI implements Listener {
     private final Player player;
     private final Inventory inventory;
     private final Island island;
-    private static final int[] BORDER_SLOTS = {0,1,2,3,4,5,6,7,8,9,17,18,26};
+    private static final int[] BORDER_SLOTS = {0,1,2,3,4,5,6,7,8,9,17,18,19,20,21,22,23,24,25,26};
     private int noMoneySlot = -1;
     private boolean isClosing = false;
 
@@ -29,19 +29,18 @@ public class GeneratorGUI implements Listener {
         this.plugin = plugin;
         this.player = player;
         this.island = island;
-        this.inventory = Bukkit.createInventory(null, 27, "§8Generator Skrafów");
+        this.inventory = Bukkit.createInventory(null, 27, "§8Pradawny Generator");
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         initializeItems();
     }
 
     private void initializeItems() {
-        // Czarne szkło jako ramka
+
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, "§r");
         for (int i : BORDER_SLOTS) {
             inventory.setItem(i, border);
         }
 
-        // Napędzacz (papier w środku)
         ItemStack napedzacz = createItem(Material.PAPER, "§aNapędzacz",
                 "§7Aby napędzić generator, najedź kursorem",
                 "§7ze skrafami na ten przedmiot.",
@@ -57,10 +56,8 @@ public class GeneratorGUI implements Listener {
         );
         inventory.setItem(13, napedzacz);
 
-        // Wypełnij pozostałe sloty czarnym szkłem
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 26; i++) {
             if (inventory.getItem(i) == null) {
-                inventory.setItem(i, border);
             }
         }
     }
@@ -78,17 +75,15 @@ public class GeneratorGUI implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (!event.getInventory().equals(inventory)) return;
 
-        // Pozwól na klikanie w dolny ekwipunek
         if (event.getRawSlot() >= inventory.getSize()) {
             return;
         }
 
-        // Zablokuj wyciąganie przedmiotów z GUI
         event.setCancelled(true);
 
         ItemStack cursor = event.getCursor();
         if (cursor != null && cursor.getType() == Material.NETHERITE_SCRAP) {
-            if (cursor.hasItemMeta() && cursor.getItemMeta().getDisplayName().equals("§6Skrafa")) {
+            if (cursor.hasItemMeta() && cursor.getItemMeta().getDisplayName().equals("§aSkrafa")) {
                 if (event.getRawSlot() == 13 ||
                         (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.PAPER)) {
                     island.getGenerator().addScraf(cursor.getAmount());
@@ -103,7 +98,6 @@ public class GeneratorGUI implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         if (event.getInventory().equals(inventory)) {
-            // Zablokuj przeciąganie tylko w górnej części inventory
             for (int slot : event.getRawSlots()) {
                 if (slot < inventory.getSize()) {
                     event.setCancelled(true);

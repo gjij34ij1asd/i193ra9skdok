@@ -20,7 +20,6 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        // Wczytaj dane ekonomiczne gracza
         plugin.getEconomyManager().loadPlayerData(player.getUniqueId());
     }
 
@@ -28,7 +27,6 @@ public class PlayerListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
 
-        // Obsługa utraty pieniędzy przy śmierci
         plugin.getEconomyManager().handlePlayerDeath(player);
     }
 
@@ -38,11 +36,9 @@ public class PlayerListener implements Listener {
         Island island = plugin.getIslandManager().getIslandAt(event.getItem().getLocation());
 
         if (island != null) {
-            // Jeśli gracz nie jest właścicielem ani członkiem wyspy
             if (!island.getOwnerId().equals(player.getUniqueId()) &&
                     !island.getMembers().contains(player.getUniqueId())) {
 
-                // Sprawdź ustawienie podnoszenia przedmiotów
                 if (!island.isPickupItems()) {
                     event.setCancelled(true);
                 }

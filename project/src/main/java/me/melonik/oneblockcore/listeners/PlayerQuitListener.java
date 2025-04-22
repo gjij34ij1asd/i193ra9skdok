@@ -18,7 +18,6 @@ public class PlayerQuitListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        // Usuń wszystkie coopy gracza
         for (Island island : plugin.getIslandManager().getIslands().values()) {
             if (island.getCoopPlayers().contains(player.getUniqueId())) {
                 island.getCoopPlayers().remove(player.getUniqueId());

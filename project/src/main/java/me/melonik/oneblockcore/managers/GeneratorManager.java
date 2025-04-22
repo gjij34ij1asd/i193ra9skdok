@@ -95,7 +95,7 @@ public class GeneratorManager {
         // Poziom 7 - Blast Furnace (tylko jeden blok)
         List<Material> blastFurnaceLevel = Collections.singletonList(Material.BLAST_FURNACE);
         levelMaterials.put(7, blastFurnaceLevel);
-        levelNames.put(7, "Ultimate");
+        levelNames.put(7, "Pradawny");
 
         // Dostępne generatory
         availableGenerators.add(Material.GRASS_BLOCK); // Poziom 1

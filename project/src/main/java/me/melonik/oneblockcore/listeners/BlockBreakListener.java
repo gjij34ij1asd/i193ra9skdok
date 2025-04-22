@@ -32,7 +32,7 @@ public class BlockBreakListener implements Listener {
         Island island = plugin.getIslandManager().getIslandAt(block.getLocation());
         if (island == null) {
             event.setCancelled(true);
-            player.sendMessage("§cNie możesz niszczyć bloków poza wyspą!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz niszczyć bloków poza wyspą!", 10, 40, 20);
             return;
         }
 
@@ -53,7 +53,7 @@ public class BlockBreakListener implements Listener {
         if (isGeneratorBlock(block, island)) {
             if (!island.getOwnerId().equals(player.getUniqueId()) && !island.hasPermission(player.getUniqueId(), "BREAK")) {
                 event.setCancelled(true);
-                player.sendMessage("§cNie masz uprawnień do niszczenia na tej wyspie!");
+                player.sendTitle("§4§lBłąd!", "§cNie masz permisji do niszczenia na tej wyspie!", 10, 40, 20);
                 return;
             }
 
@@ -63,7 +63,7 @@ public class BlockBreakListener implements Listener {
             Generator generator = island.getGenerator();
             if (generator != null) {
                 if (generator.getLevel() == 7 && block.getType() == Material.BLAST_FURNACE) {
-                    player.sendTitle("§4§lBłąd", "§7Zobacz chat", 10, 40, 10);
+                    player.sendTitle("§4§lBłąd!", "§cZobacz chat!", 10, 40, 10);
                     player.sendMessage("§cTego bloku nie możesz wykopać zmień go pod /panel");
                     return;
                 }
@@ -76,11 +76,12 @@ public class BlockBreakListener implements Listener {
                     if (newProgress >= 100) {
                         if (generator.getSelectedGeneratorLevel() < 7 && currentProgress < 100) {
                             player.sendMessage("");
-                            player.sendMessage("§6§lGRATULACJE!");
+                            player.sendMessage("§2§lGRATULACJE!");
                             player.sendMessage("§7Twój generator osiągnął maksymalny postęp!");
                             player.sendMessage("§7Możesz go ulepszyć do poziomu §f" + (generator.getSelectedGeneratorLevel() + 1) + " §7w panelu.");
                             player.sendMessage("§7Aby to zrobić, użyj komendy §f/panel §7i wybierz nowy typ generatora.");
                             player.sendMessage("");
+                            player.sendTitle("§2§lSuckes!", "§aWbiłeś nowy poziom generatora!", 10, 40, 20);
 
                             player.playSound(player.getLocation(), "entity.player.levelup", 1.0f, 1.0f);
 
@@ -111,7 +112,7 @@ public class BlockBreakListener implements Listener {
                     }
                 }
 
-                Location dropLocation = block.getLocation().clone().add(0.5, 1, 0.5);
+                Location dropLocation = block.getLocation().clone().add(0, 1, 0);
                 Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
 
                 Material newType = plugin.getGeneratorManager().getRandomMaterial(generator.getSelectedGeneratorLevel());
@@ -155,8 +156,6 @@ public class BlockBreakListener implements Listener {
             case LAPIS_ORE, DEEPSLATE_LAPIS_ORE -> 4;
             case DIAMOND_ORE, DEEPSLATE_DIAMOND_ORE -> 3;
             case NETHER_QUARTZ_ORE -> 3;
-            case ANCIENT_DEBRIS -> 3;
-            case SPAWNER -> 15;
             default -> 0;
         };
     }

@@ -20,13 +20,13 @@ public class GeneratorSelectorGUI implements Listener {
     private final Player player;
     private final Inventory inventory;
     private final Island island;
-    private static final int[] BORDER_SLOTS = {0,1,2,3,4,5,6,7,8,9,17,18,26};
+    private static final int[] BORDER_SLOTS = {0,8};
 
     public GeneratorSelectorGUI(Main plugin, Player player, Island island) {
         this.plugin = plugin;
         this.player = player;
         this.island = island;
-        this.inventory = Bukkit.createInventory(null, 27, "§8Wybór Generatora");
+        this.inventory = Bukkit.createInventory(null, 9, "§8Zarządzanie Generatorem");
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         initializeItems();
     }
@@ -39,48 +39,55 @@ public class GeneratorSelectorGUI implements Listener {
         }
 
         // Generator poziomu 1 - Dirt
-        createGeneratorItem(11, Material.GRASS_BLOCK, "§aGenerator Ziemi", 1);
+        createGeneratorItem(1, Material.GRASS_BLOCK, "§aGenerator Ziemi", 1);
 
         // Generator poziomu 2 - Wood
-        createGeneratorItem(12, Material.OAK_LOG, "§6Generator Drewna", 2);
+        createGeneratorItem(2, Material.OAK_LOG, "§6Generator Drewna", 2);
 
         // Generator poziomu 3 - Stone
-        createGeneratorItem(13, Material.STONE, "§7Generator Kamienia", 3);
+        createGeneratorItem(3, Material.STONE, "§7Generator Kamienia", 3);
 
         // Generator poziomu 4 - Ores
-        createGeneratorItem(14, Material.DIAMOND_ORE, "§bGenerator Rud", 4);
+        createGeneratorItem(4, Material.DIAMOND_ORE, "§bGenerator Rud", 4);
 
         // Generator poziomu 5 - Nether
-        createGeneratorItem(15, Material.NETHERRACK, "§cGenerator Netheru", 5);
+        createGeneratorItem(5, Material.NETHERRACK, "§cGenerator Piekła", 5);
 
         // Generator poziomu 6 - End
-        createGeneratorItem(16, Material.END_STONE, "§5Generator Endu", 6);
+        createGeneratorItem(6, Material.END_STONE, "§5Generator Kresu", 6);
 
         // Generator poziomu 7 - Ultimate
         if (island.getMaxLevel() >= 7) {
-            ItemStack item = createItem(Material.BLAST_FURNACE, "§4Generator Ultimate",
-                    "§7Poziom generatora: §f7",
+            ItemStack item = createItem(Material.BLAST_FURNACE, "§2Generator Pradawny",
+                    "§7Maksymalny poziom generatora! §f(7)",
                     "",
                     "§7Kliknij aby ustawić ten generator"
             );
-            inventory.setItem(22, item);
+            inventory.setItem(7, item);
         } else {
             ItemStack item = createItem(Material.BARRIER, "§8§l???",
                     "§cNieodblokowane",
                     "§7Wymagany poziom: §f7"
             );
-            inventory.setItem(22, item);
+            inventory.setItem(7, item);
         }
     }
 
     private void createGeneratorItem(int slot, Material material, String name, int level) {
         if (island.getMaxLevel() >= level) {
-            ItemStack item = createItem(material, name,
-                    "§7Poziom generatora: §f" + level,
-                    "",
-                    "§7Kliknij aby ustawić ten generator"
-            );
-            inventory.setItem(slot, item);
+            if (level == island.getGenerator().getSelectedGeneratorLevel()) {
+                ItemStack item = createItem(material, name,
+                        "§7Poziom generatora: §f" + level,
+                        "",
+                        "§cTen generator jest aktualnie wybrany!");
+                inventory.setItem(slot, item);
+            } else {
+                ItemStack item = createItem(material, name,
+                        "§7Poziom generatora: §f" + level,
+                        "",
+                        "§7Kliknij aby ustawić ten generator");
+                inventory.setItem(slot, item);
+            }
         } else {
             ItemStack item = createItem(Material.BARRIER, "§8§l???",
                     "§cNieodblokowane",
@@ -106,7 +113,7 @@ public class GeneratorSelectorGUI implements Listener {
 
         Player player = (Player) event.getWhoClicked();
         if (!island.getOwnerId().equals(player.getUniqueId())) {
-            player.sendMessage("§cTylko właściciel wyspy może zmieniać generator!");
+            player.sendTitle("§4§lBłąd!", "§cTylko właściciel może to zrobić!", 10, 40, 20);
             player.closeInventory();
             return;
         }
@@ -118,13 +125,18 @@ public class GeneratorSelectorGUI implements Listener {
 
         int selectedLevel = getLevelFromMaterial(clickedItem.getType());
         if (selectedLevel > 0 && selectedLevel <= island.getMaxLevel()) {
-            // Wyczyść skrafy przy zmianie generatora
+            if (selectedLevel == island.getGenerator().getSelectedGeneratorLevel()) {
+                player.sendTitle("§4§lBłąd!", "§cTen poziom generator jest już wybrany!", 10, 40, 20);
+                player.closeInventory();
+                return;
+            }
+
             island.getGenerator().clearScrafs();
             island.getGenerator().setSelectedGeneratorLevel(selectedLevel);
-            island.getGenerator().setProgress(0); // Reset postępu przy zmianie generatora
+
             Location center = island.getCenter();
             center.getBlock().setType(clickedItem.getType());
-            player.sendMessage("§aZmieniono typ generatora!");
+            player.sendTitle("§2§lSuckes!", "§aPomyślnie zmieniono poziom generatora!", 10, 40, 20);
             plugin.getIslandManager().saveIslands();
             player.closeInventory();
         }

@@ -36,12 +36,11 @@ public class IslandManager {
     }
 
     private void startBlockCountTask() {
-        // Aktualizuj liczniki bloków co 5 minut
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Island island : islands.values()) {
                 updateBlockCounts(island);
             }
-        }, 6000L, 6000L); // 5 minut = 6000 ticków
+        }, 6000L, 6000L);
     }
 
     public void updateBlockCounts(Island island) {
@@ -76,7 +75,6 @@ public class IslandManager {
             }
         }
 
-        // Aktualizuj liczniki w obiekcie Island
         island.getUpgrades().setSpawnerCount(spawnerCount);
         island.getUpgrades().setHopperCount(hopperCount);
         island.getUpgrades().setPistonCount(pistonCount);
@@ -121,7 +119,6 @@ public class IslandManager {
         int minY = 0;
         int maxY = center.getWorld().getMaxHeight();
 
-        // Najpierw usuń wszystkie bariery w większym obszarze
         for (int y = minY; y < maxY; y++) {
             for (int x = -radius - 5; x <= radius + 5; x++) {
                 for (int z = -radius - 5; z <= radius + 5; z++) {
@@ -134,18 +131,7 @@ public class IslandManager {
             }
         }
 
-        // Teraz ustaw nowe bariery
-        for (int y = minY; y < maxY; y++) {
-            for (int x = -radius - 1; x <= radius + 1; x++) {
-                for (int z = -radius - 1; z <= radius + 1; z++) {
-                    if (Math.abs(x) == radius + 1 || Math.abs(z) == radius + 1) {
-                        Location loc = center.clone().add(x, y - center.getY(), z);
-                        Block block = loc.getBlock();
-                        block.setType(Material.BARRIER);
-                    }
-                }
-            }
-        }
+        // Nie generujemy nowych barier
     }
 
     public Island createIsland(Player player) {
@@ -153,9 +139,8 @@ public class IslandManager {
             return null;
         }
 
-        // Sprawdź cooldown
         long cooldown = islandCooldowns.getOrDefault(player.getUniqueId(), 0L);
-        if (System.currentTimeMillis() - cooldown < 1800000) { // 30 minut
+        if (System.currentTimeMillis() - cooldown < 1800000) {
             player.sendMessage("§cMusisz poczekać jeszcze " +
                     formatTime((1800000 - (System.currentTimeMillis() - cooldown)) / 1000) +
                     " przed założeniem nowej wyspy!");
@@ -173,6 +158,11 @@ public class IslandManager {
             return null;
         }
 
+        if (isLocationOccupied(islandLocation)) {
+            player.sendMessage("§cTa lokalizacja jest już zajęta przez inną wyspę!");
+            return null;
+        }
+
         Island island = new Island(player.getUniqueId(), islandLocation);
 
         islands.put(island.getIslandId(), island);
@@ -185,29 +175,42 @@ public class IslandManager {
         return island;
     }
 
+    private boolean isLocationOccupied(Location location) {
+        int gridSize = plugin.getConfigManager().getIslandSpacing();
+        int buffer = gridSize / 2;
+
+        for (Location usedLoc : usedLocations) {
+            if (usedLoc.getWorld().equals(location.getWorld())) {
+                double distance = location.distance(usedLoc);
+                if (distance < buffer) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private Location findNextIslandLocation() {
         int islandCount = islands.size();
         int gridSize = plugin.getConfigManager().getIslandSpacing();
         int height = plugin.getConfigManager().getIslandHeight();
 
-        int x = (islandCount % 10) * gridSize;
-        int z = (islandCount / 10) * gridSize;
+        for (int i = 0; i < 100; i++) {
+            int x = ((islandCount + i) % 10) * gridSize;
+            int z = ((islandCount + i) / 10) * gridSize;
+            Location loc = new Location(islandWorld, x, height, z);
 
-        Location loc = new Location(islandWorld, x, height, z);
-
-        // Sprawdź czy lokacja jest wolna
-        if (!usedLocations.contains(loc)) {
-            return loc;
+            if (!isLocationOccupied(loc)) {
+                return loc;
+            }
         }
 
-        // Jeśli nie, szukaj następnej wolnej lokacji
-        for (int i = 0; i < 1000; i++) {
-            x = (i % 10) * gridSize;
-            z = (i / 10) * gridSize;
-            loc = new Location(islandWorld, x, height, z);
-
-            if (!usedLocations.contains(loc)) {
-                return loc;
+        for (int x = -5000; x <= 5000; x += gridSize) {
+            for (int z = -5000; z <= 5000; z += gridSize) {
+                Location loc = new Location(islandWorld, x, height, z);
+                if (!isLocationOccupied(loc)) {
+                    return loc;
+                }
             }
         }
 
@@ -263,9 +266,8 @@ public class IslandManager {
             UUID ownerId = island.getOwnerId();
             Player owner = Bukkit.getPlayer(ownerId);
 
-            // Sprawdź cooldown
             long cooldown = deleteCooldowns.getOrDefault(ownerId, 0L);
-            if (System.currentTimeMillis() - cooldown < 1800000) { // 30 minut
+            if (System.currentTimeMillis() - cooldown < 1800000) {
                 if (owner != null) {
                     owner.sendMessage("§cMusisz poczekać jeszcze " +
                             formatTime((1800000 - (System.currentTimeMillis() - cooldown)) / 1000) +
@@ -274,7 +276,6 @@ public class IslandManager {
                 return;
             }
 
-            // Sprawdź potwierdzenie
             int confirmCount = deleteConfirmations.getOrDefault(ownerId, 0);
             if (confirmCount < 2) {
                 if (owner != null) {
@@ -285,7 +286,6 @@ public class IslandManager {
                     owner.sendMessage("§cMasz na to 60 sekund!");
                     owner.sendMessage("");
 
-                    // Teleportuj gracza na spawn świata "world" przy pierwszym potwierdzeniu
                     if (confirmCount == 0) {
                         World mainWorld = Bukkit.getWorld("world");
                         if (mainWorld != null && owner != null) {
@@ -296,25 +296,20 @@ public class IslandManager {
 
                 deleteConfirmations.put(ownerId, confirmCount + 1);
 
-                // Usuń potwierdzenie po 60 sekundach
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     deleteConfirmations.remove(ownerId);
-                }, 1200L); // 60 sekund
+                }, 1200L);
                 return;
             }
 
-            // Usuń bariery przed usunięciem wyspy
             clearOldBorder(island.getCenter(), island.getBorderSize() / 2 + 1, 0, island.getCenter().getWorld().getMaxHeight());
 
-            // Usuń właściciela z mapy playerIslands
             playerIslands.remove(ownerId);
 
-            // Usuń wszystkich członków z mapy playerIslands
             for (UUID memberId : new ArrayList<>(island.getMembers())) {
                 playerIslands.remove(memberId);
             }
 
-            // Usuń wyspę z mapy islands
             islands.remove(islandId);
             usedLocations.remove(island.getCenter());
             deleteCooldowns.put(ownerId, System.currentTimeMillis());
@@ -413,7 +408,6 @@ public class IslandManager {
         this.islands.clear();
         this.islands.putAll(newIslands);
 
-        // Odbuduj usedLocations
         this.usedLocations.clear();
         for (Island island : newIslands.values()) {
             this.usedLocations.add(island.getCenter());

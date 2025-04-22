@@ -53,27 +53,22 @@ public class MemberPermissionsGUI implements Listener {
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetId);
         String playerName = target.getName();
 
-        // Zarządzanie członkami
         addPermissionItem(10, Material.PAPER, "Dodawanie członków", "ADD_MEMBER", playerName);
         addPermissionItem(11, Material.PAPER, "Wyrzucanie członków", "KICK_MEMBER", playerName);
 
-        // Podstawowe uprawnienia
         addPermissionItem(12, Material.GRAVEL, "Niszczenie bloków", "BREAK", playerName);
         addPermissionItem(13, Material.OAK_PLANKS, "Stawianie bloków", "BUILD", playerName);
         addPermissionItem(14, Material.BEACON, "Niszczenie magicznych latarni", "BEACON_BREAK", playerName);
         addPermissionItem(15, Material.CHEST, "Otwieranie skrzynek", "CHEST", playerName);
         addPermissionItem(16, Material.FURNACE, "Otwieranie pieców", "FURNACE", playerName);
 
-        // Walka
         addPermissionItem(19, Material.IRON_SWORD, "Atakowanie potworów", "ATTACK_MOBS", playerName);
         addPermissionItem(20, Material.PORKCHOP, "Atakowanie zwierząt", "ATTACK_ANIMALS", playerName);
 
-        // Interakcje
         addPermissionItem(21, Material.OAK_DOOR, "Interakcja z otwieraniem", "DOORS", playerName);
         addPermissionItem(22, Material.CLOCK, "Kupowanie ulepszeń", "UPGRADES", playerName);
         addPermissionItem(23, Material.STONE_PRESSURE_PLATE, "Używanie przycisków i płytek", "REDSTONE", playerName);
 
-        // Spawnery
         addPermissionItem(24, Material.SPAWNER, "Stawianie/niszczenie spawnerów", "SPAWNER_MANAGE", playerName);
         addPermissionItem(25, Material.SPAWNER, "Zarządzanie spawnerami", "SPAWNER_SETTINGS", playerName);
     }
@@ -113,7 +108,7 @@ public class MemberPermissionsGUI implements Listener {
         }
 
         if (!island.getOwnerId().equals(player.getUniqueId())) {
-            player.sendMessage("§cTylko właściciel wyspy może zarządzać uprawnieniami!");
+            player.sendTitle("§4§lBłąd!", "§cTylko właściciel wyspy może zarządzać permisjami!", 10, 40, 20);
             player.closeInventory();
             return;
         }

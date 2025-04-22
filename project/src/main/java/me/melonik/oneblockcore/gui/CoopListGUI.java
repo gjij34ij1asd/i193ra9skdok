@@ -37,7 +37,6 @@ public class CoopListGUI implements Listener {
         Island island = plugin.getIslandManager().getPlayerIsland(player.getUniqueId());
         if (island == null) return;
 
-        // Ramka GUI
         for (int slot : BORDER_SLOTS) {
 
             ItemStack backButton = createItem(Material.PAPER, "§cPowrót!",
@@ -76,7 +75,6 @@ public class CoopListGUI implements Listener {
             inventory.setItem(slot++, head);
         }
 
-        // Przycisk edycji uprawnień
         ItemStack permissionsButton = createItem(Material.PAPER, "§eEdytuj uprawnienia coopów",
                 "§7Kliknij, aby edytować uprawnienia",
                 "§7dla wszystkich tymczasowych coopów"
@@ -118,7 +116,6 @@ public class CoopListGUI implements Listener {
         if (clicked == null) return;
 
         if (event.getSlot() == 53) {
-            // Otwórz GUI edycji uprawnień coopów
             new CoopPermissionsGUI(plugin, player).open();
             return;
         }

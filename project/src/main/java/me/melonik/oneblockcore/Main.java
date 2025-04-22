@@ -28,7 +28,8 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         startMoneyGeneratorTask();
-        // Inicjalizacja Vault
+        startScrafRemovalTask();
+
         if (setupEconomy()) {
             getLogger().info("Vault economy found and hooked successfully!");
             vaultEnabled = true;
@@ -38,7 +39,6 @@ public class Main extends JavaPlugin {
             return;
         }
 
-        // Inicjalizacja managerów
         this.configManager = new ConfigManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.islandManager = new IslandManager(this);
@@ -46,10 +46,8 @@ public class Main extends JavaPlugin {
         this.generatorManager = new GeneratorManager(this);
         this.spawnerManager = new SpawnerManager(this);
 
-        // Ładowanie danych
         databaseManager.loadData();
 
-        // Rejestracja komend
         getCommand("is").setExecutor(new IslandCommand(this));
         getCommand("is").setTabCompleter(new IslandTabCompleter(this));
         getCommand("panel").setExecutor(new PanelCommand(this));
@@ -58,7 +56,6 @@ public class Main extends JavaPlugin {
         getCommand("pay").setExecutor(new PayCommand(this));
         getCommand("eco").setExecutor(new EcoCommand(this));
 
-        // Rejestracja listenerów
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new IslandProtectionListener(this), this);
         getServer().getPluginManager().registerEvents(new IslandVisualListener(this), this);
@@ -67,13 +64,12 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
         getServer().getPluginManager().registerEvents(new SpawnerListener(this), this);
         getServer().getPluginManager().registerEvents(new EnderPearlListener(), this);
+        getServer().getPluginManager().registerEvents(new NPCListener(this), this);
 
-        // Inicjalizacja PlaceholderAPI
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new OneBlockPlaceholders(this).register();
         }
 
-        // Automatyczny zapis danych
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -107,11 +103,21 @@ public class Main extends JavaPlugin {
             @Override
             public void run() {
                 for (Island island : islandManager.getIslands().values()) {
-                    // Dodaj pieniądze tylko jeśli generator jest na poziomie 7
                     if (island.getGenerator().getSelectedGeneratorLevel() == 7) {
                         double moneyToAdd = island.getGenerator().getMoneyPerSecond();
                         economyManager.addPlayerMoney(island.getOwnerId(), moneyToAdd);
                     }
+                }
+            }
+        }.runTaskTimer(this, 20L, 20L);
+    }
+
+    private void startScrafRemovalTask() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Island island : islandManager.getIslands().values()) {
+                    island.getGenerator().checkAndRemoveScrafs();
                 }
             }
         }.runTaskTimer(this, 20L, 20L);

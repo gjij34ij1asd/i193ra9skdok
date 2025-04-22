@@ -27,7 +27,6 @@ public class IslandVisualListener implements Listener {
         this.playerBossBars = new HashMap<>();
         this.playerCurrentIsland = new HashMap<>();
 
-        // Task do odświeżania borderów
         Bukkit.getScheduler().runTaskTimer(plugin, this::updateBorders, 20L, 20L);
     }
 
@@ -40,17 +39,15 @@ public class IslandVisualListener implements Listener {
 
         if (island != currentIsland) {
             if (currentIsland != null) {
-                // Opuszczenie wyspy
                 removeBossBar(player);
                 player.setWorldBorder(null);
-                player.resetPlayerTime(); // Reset czasu przy opuszczeniu wyspy
+                player.resetPlayerTime();
             }
 
             if (island != null) {
-                // Wejście na wyspę
                 showIslandInfo(player, island);
                 updateWorldBorder(player, island);
-                updatePlayerTime(player, island); // Aktualizacja czasu przy wejściu na wyspę
+                updatePlayerTime(player, island);
             }
 
             playerCurrentIsland.put(player.getUniqueId(), island);
@@ -70,7 +67,7 @@ public class IslandVisualListener implements Listener {
         Player player = event.getPlayer();
         removeBossBar(player);
         playerCurrentIsland.remove(player.getUniqueId());
-        player.resetPlayerTime(); // Reset czasu przy wyjściu z serwera
+        player.resetPlayerTime();
     }
 
     private void showIslandInfo(Player player, Island island) {

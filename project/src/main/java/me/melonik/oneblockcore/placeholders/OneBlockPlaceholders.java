@@ -28,25 +28,22 @@ public class OneBlockPlaceholders extends PlaceholderExpansion {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "ZacolecOneBlock";
     }
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if (player == null) return "";
 
-        // %oneblock_has_island%
         if (params.equals("has_island")) {
             return plugin.getIslandManager().hasIsland(player.getUniqueId()) ? "1" : "0";
         }
 
-        // %oneblock_generator_level%
         if (params.equals("generator_level")) {
             Island island = plugin.getIslandManager().getPlayerIsland(player.getUniqueId());
             return island != null ? String.valueOf(island.getMaxLevel()) : "0";
         }
 
-        // %oneblock_generator_progress%
         if (params.equals("generator_progress")) {
             Island island = plugin.getIslandManager().getPlayerIsland(player.getUniqueId());
             if (island != null) {
@@ -63,38 +60,46 @@ public class OneBlockPlaceholders extends PlaceholderExpansion {
             return "§8[§7●●●●●●●●●●§8] §b0%";
         }
 
-        // %oneblock_money%
         if (params.equals("money")) {
-            return String.format("%.2f", plugin.getEconomyManager().getPlayerMoney(player.getUniqueId()));
+            return formatMoney(plugin.getEconomyManager().getPlayerMoney(player.getUniqueId()));
         }
 
-        // %oneblock_bank%
         if (params.equals("bank")) {
-            return String.format("%.2f", plugin.getEconomyManager().getBankMoney(player.getUniqueId()));
+            return formatMoney(plugin.getEconomyManager().getBankMoney(player.getUniqueId()));
         }
 
-        // %oneblock_money_top_X%
         if (params.startsWith("money_top_")) {
             try {
                 int position = Integer.parseInt(params.substring(10)) - 1;
                 Map.Entry<UUID, Double> entry = plugin.getEconomyManager().getMoneyTopList(position + 1).get(position);
-                return String.format("%.2f", entry.getValue());
+                return formatMoney(entry.getValue());
             } catch (Exception e) {
-                return "0.00";
+                return "0.0";
             }
         }
 
-        // %oneblock_bank_top_X%
         if (params.startsWith("bank_top_")) {
             try {
                 int position = Integer.parseInt(params.substring(9)) - 1;
                 Map.Entry<UUID, Double> entry = plugin.getEconomyManager().getBankTopList(position + 1).get(position);
-                return String.format("%.2f", entry.getValue());
+                return formatMoney(entry.getValue());
             } catch (Exception e) {
-                return "0.00";
+                return "0.0";
             }
         }
 
         return null;
+    }
+
+    private String formatMoney(double amount) {
+        if (amount >= 1_000_000_000) {
+            return String.format("%.1fmld", amount / 1_000_000_000);
+        } else if (amount >= 1_000_000) {
+            return String.format("%.1fmln", amount / 1_000_000);
+        } else if (amount >= 1_000) {
+            return String.format("%.1fk", amount / 1_000);
+        } else {
+            return String.format("%.1f", amount);
+        }
     }
 }

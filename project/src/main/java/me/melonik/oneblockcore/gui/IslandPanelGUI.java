@@ -36,46 +36,36 @@ public class IslandPanelGUI implements Listener {
     private void initializeItems() {
         Island island = plugin.getIslandManager().getPlayerIsland(player.getUniqueId());
         if (island == null) return;
-
-        // Ramka GUI
-        ItemStack borderFrame = createItem(Material.BLACK_STAINED_GLASS_PANE, "§r");
         for (int slot : BORDER_SLOTS) {
-            inventory.setItem(slot, borderFrame);
         }
 
-        // Generator
         ItemStack generator = createItem(Material.BLAST_FURNACE, "§bZarządzanie generatorem",
                 "§7Kliknij aby zmienić typ generatora"
         );
         inventory.setItem(1, generator);
 
-        // Ustawienia wyspy
         ItemStack settings = createItem(Material.REDSTONE_BLOCK, "§bUstawienia wyspy",
                 "§7Kliknij aby otworzyć ustawienia!"
         );
         inventory.setItem(2, settings);
 
-        // Permisje członków
         ItemStack permissions = createItem(Material.PLAYER_HEAD, "§bEdytuj permisje członków",
                 "§7Kliknij, aby zarządzać uprawnieniami",
                 "§7członków twojej wyspy"
         );
         inventory.setItem(3, permissions);
 
-        // Ulepszenia
         ItemStack upgrades = createItem(Material.EXPERIENCE_BOTTLE, "§bUlepszenia wyspy",
                 "§7Kliknij, aby otworzyć menu ulepszeń"
         );
         inventory.setItem(5, upgrades);
 
-        // Lista zbanowanych
         ItemStack banned = createItem(Material.BARRIER, "§bZbanowani gracze",
                 "§7Kliknij aby zobaczyć listę",
                 "§7zbanowanych graczy"
         );
         inventory.setItem(6, banned);
 
-        // Zarządzanie coopami
         ItemStack coops = createItem(Material.PAPER, "§bZarządzanie coopami",
                 "§7Kliknij, aby zarządzać tymczasowymi",
                 "§7uprawnieniami na wyspie"
@@ -112,22 +102,22 @@ public class IslandPanelGUI implements Listener {
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
         switch (event.getSlot()) {
-            case 1: // Generator
+            case 1:
                 new GeneratorSelectorGUI(plugin, player, island).open();
                 break;
-            case 2: // Ustawienia
+            case 2:
                 new IslandSettingsGUI(plugin, player).open();
                 break;
-            case 3: // Permisje
+            case 3:
                 new MemberListGUI(plugin, player).open();
                 break;
-            case 5: // Ulepszenia
+            case 5:
                 new IslandUpgradesGUI(plugin, player).open();
                 break;
-            case 6: // Zbanowani
+            case 6:
                 openBannedPlayersGUI();
                 break;
-            case 7: // Coopy
+            case 7:
                 new CoopListGUI(plugin, player).open();
                 break;
         }
@@ -140,7 +130,6 @@ public class IslandPanelGUI implements Listener {
         Inventory bannedInventory = Bukkit.createInventory(null, 54, "§8Zbanowani gracze");
 
 
-        // Lista zbanowanych
         int slot = 10;
         for (UUID bannedId : island.getBanned()) {
             if (slot > 15) break;
@@ -160,7 +149,6 @@ public class IslandPanelGUI implements Listener {
             }
         }
 
-        // Dodaj listener dla nowego inventory
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onInventoryClick(InventoryClickEvent event) {

@@ -31,11 +31,9 @@ public class IslandSettingsGUI implements Listener {
     }
 
     private void initializeItems() {
-        // Ramka GUI
         for (int slot : BORDER_SLOTS) {
         }
 
-        // Pora dnia
         ItemStack timeItem = createItem(Material.CLOCK, "§3Zmiana pory dnia",
                 "§7Aktualnie: " + (island.isAlwaysDay() ? "§aDzień" : "§9Noc"),
                 "",
@@ -43,7 +41,6 @@ public class IslandSettingsGUI implements Listener {
         );
         inventory.setItem(11, timeItem);
 
-        // Atakowanie zwierząt
         ItemStack animalAttackItem = createItem(Material.BEEF, "§3Atakowanie zwierząt",
                 "§7Status: " + (island.isAnimalDamage() ? "§aWłączone" : "§cWyłączone"),
                 "",
@@ -51,15 +48,13 @@ public class IslandSettingsGUI implements Listener {
         );
         inventory.setItem(12, animalAttackItem);
 
-        // Atakowanie mobów
-        ItemStack mobAttackItem = createItem(Material.ZOMBIE_HEAD, "§eAtakowanie mobów",
+        ItemStack mobAttackItem = createItem(Material.ZOMBIE_HEAD, "§3Atakowanie mobów",
                 "§7Status: " + (island.isMobDamage() ? "§aWłączone" : "§cWyłączone"),
                 "",
                 "§7Kliknij aby " + (island.isMobDamage() ? "§cwyłączyć" : "§awłączyć")
         );
         inventory.setItem(13, mobAttackItem);
 
-        // Odwiedzanie wyspy
         ItemStack visitItem = createItem(Material.OAK_DOOR, "§3Odwiedzanie wyspy",
                 "§7Status: " + (island.isVisitable() ? "§aWłączone" : "§cWyłączone"),
                 "",
@@ -67,7 +62,6 @@ public class IslandSettingsGUI implements Listener {
         );
         inventory.setItem(14, visitItem);
 
-        // Podnoszenie itemów
         ItemStack pickupItem = createItem(Material.HOPPER, "§3Podnoszenie przedmiotów",
                 "§7Status: " + (island.isPickupItems() ? "§aWłączone" : "§cWyłączone"),
                 "",
@@ -75,7 +69,6 @@ public class IslandSettingsGUI implements Listener {
         );
         inventory.setItem(15, pickupItem);
 
-        // Przycisk powrotu
         ItemStack backButton = createItem(Material.PAPER, "§cPowrót!",
                 "§7Kliknij, aby wrócić do panelu wyspy"
         );
@@ -104,7 +97,7 @@ public class IslandSettingsGUI implements Listener {
         event.setCancelled(true);
 
         if (!island.getOwnerId().equals(player.getUniqueId())) {
-            player.sendMessage("§cTylko właściciel wyspy może zmieniać ustawienia!");
+            player.sendTitle("§4§lBłąd!", "§cTylko właściciel wyspy może zmieniać ustawienia!", 10, 40, 20);
             player.closeInventory();
             return;
         }
@@ -113,28 +106,27 @@ public class IslandSettingsGUI implements Listener {
         if (clicked == null || clicked.getType() == Material.BLACK_STAINED_GLASS_PANE) return;
 
         switch (event.getSlot()) {
-            case 11: // Pora dnia
+            case 11:
                 island.setAlwaysDay(!island.isAlwaysDay());
-                // Wysyłamy nowy czas tylko do graczy na wyspie
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (island.isOnIsland(p)) {
                         p.setPlayerTime(island.isAlwaysDay() ? 6000 : 18000, false);
                     }
                 }
                 break;
-            case 12: // Atakowanie zwierząt
+            case 12:
                 island.setAnimalDamage(!island.isAnimalDamage());
                 break;
-            case 13: // Atakowanie mobów
+            case 13:
                 island.setMobDamage(!island.isMobDamage());
                 break;
-            case 14: // Odwiedzanie
+            case 14:
                 island.setVisitable(!island.isVisitable());
                 break;
-            case 15: // Podnoszenie itemów
+            case 15:
                 island.setPickupItems(!island.isPickupItems());
                 break;
-            case 22: // Powrót
+            case 22:
                 new IslandPanelGUI(plugin, player).open();
                 return;
         }

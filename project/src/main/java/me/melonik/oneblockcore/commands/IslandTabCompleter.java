@@ -35,7 +35,6 @@ public class IslandTabCompleter implements TabCompleter {
             return result;
         }
 
-        // Dla komend wymagających gracza jako drugi argument
         if (args.length == 2) {
             String subCommand = args[0].toLowerCase();
             if (subCommand.equals("coop") ||

@@ -48,7 +48,6 @@ public class MemberListGUI implements Listener {
 
         inventory.setItem(49, backButton);
 
-        // Dodaj głowę właściciela
         OfflinePlayer owner = Bukkit.getOfflinePlayer(island.getOwnerId());
         ItemStack ownerHead = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta ownerMeta = (SkullMeta) ownerHead.getItemMeta();
@@ -71,7 +70,6 @@ public class MemberListGUI implements Listener {
         ownerHead.setItemMeta(ownerMeta);
         inventory.setItem(10, ownerHead);
 
-        // Członkowie wyspy
         int slot = 11;
         for (UUID memberId : island.getMembers()) {
             if (memberId.equals(island.getOwnerId())) continue;
@@ -88,27 +86,22 @@ public class MemberListGUI implements Listener {
             lore.add("");
             lore.add("§bLista uprawnień:");
 
-            // Zarządzanie członkami
             lore.add(getPermissionString("Dodawanie członków", memberId, "ADD_MEMBER"));
             lore.add(getPermissionString("Wyrzucanie członków", memberId, "KICK_MEMBER"));
 
-            // Podstawowe uprawnienia
             lore.add(getPermissionString("Niszczenie bloków", memberId, "BREAK"));
             lore.add(getPermissionString("Stawianie bloków", memberId, "BUILD"));
             lore.add(getPermissionString("Niszczenie magicznych latarni", memberId, "BEACON_BREAK"));
             lore.add(getPermissionString("Otwieranie skrzynek", memberId, "CHEST"));
             lore.add(getPermissionString("Otwieranie pieców", memberId, "FURNACE"));
 
-            // Walka
             lore.add(getPermissionString("Atakowanie potworów", memberId, "ATTACK_MOBS"));
             lore.add(getPermissionString("Atakowanie zwierząt", memberId, "ATTACK_ANIMALS"));
 
-            // Interakcje
             lore.add(getPermissionString("Interakcja z otwieraniem", memberId, "DOORS"));
             lore.add(getPermissionString("Kupowanie ulepszeń", memberId, "UPGRADES"));
             lore.add(getPermissionString("Używanie przycisków i płytek", memberId, "REDSTONE"));
 
-            // Spawnery
             lore.add(getPermissionString("Stawianie/niszczenie spawnerów", memberId, "SPAWNER_MANAGE"));
             lore.add(getPermissionString("Zarządzanie spawnerami", memberId, "SPAWNER_SETTINGS"));
 
@@ -149,7 +142,7 @@ public class MemberListGUI implements Listener {
         }
 
         if (!island.getOwnerId().equals(player.getUniqueId())) {
-            player.sendMessage("§cTylko właściciel wyspy może zarządzać uprawnieniami!");
+            player.sendTitle("§4§lBłąd!", "§cTylko właściciel wyspy może zarządzać permisjami!", 10, 40, 20);
             player.closeInventory();
             return;
         }
@@ -163,7 +156,8 @@ public class MemberListGUI implements Listener {
         UUID targetId = clickedMeta.getOwningPlayer().getUniqueId();
 
         if (targetId.equals(island.getOwnerId())) {
-            player.sendMessage("§cNie możesz edytować uprawnień właściciela!");
+            player.sendTitle("§4§lBłąd!", "§cNie możesz edytować permisji właściciela!", 10, 40, 20);
+            player.closeInventory();
             return;
         }
 

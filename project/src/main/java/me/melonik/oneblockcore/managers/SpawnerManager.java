@@ -78,16 +78,14 @@ public class SpawnerManager {
     private List<Location> findSafeLocations(Location center, int count) {
         List<Location> locations = new ArrayList<>();
         World world = center.getWorld();
-        int radius = 5; // Promień poszukiwania bezpiecznych lokacji
+        int radius = 5;
 
         for (int attempts = 0; attempts < count * 3 && locations.size() < count; attempts++) {
-            // Losowe współrzędne w promieniu
             int x = random.nextInt(radius * 2) - radius;
             int z = random.nextInt(radius * 2) - radius;
 
             Location loc = center.clone().add(x, 0, z);
 
-            // Znajdź najbliższy stały blok od dołu
             Block block = null;
             for (int y = 0; y <= 3; y++) {
                 block = loc.clone().subtract(0, y, 0).getBlock();
@@ -98,7 +96,6 @@ public class SpawnerManager {
             }
 
             if (block != null && !block.isEmpty() && !block.isLiquid()) {
-                // Sprawdź czy jest miejsce na moba (2 bloki powietrza)
                 Location spawnLoc = loc.clone();
                 if (spawnLoc.getBlock().isEmpty() &&
                         spawnLoc.clone().add(0, 1, 0).getBlock().isEmpty() &&
@@ -145,7 +142,6 @@ public class SpawnerManager {
         this.spawners.clear();
         this.spawners.putAll(spawners);
 
-        // Zresetuj pozostałe spawny dla wszystkich spawnerów
         for (CustomSpawner spawner : spawners.values()) {
             remainingSpawns.put(spawner, spawner.getMobsPerMinute());
         }

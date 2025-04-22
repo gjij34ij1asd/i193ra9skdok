@@ -36,7 +36,6 @@ public class SpawnerGUI implements Listener {
     }
 
     private void initializeItems() {
-        // Ramka GUI
         ItemStack borderFrame = createItem(Material.BLACK_STAINED_GLASS_PANE, "§r");
         for (int slot : BORDER_SLOTS) {
             inventory.setItem(slot, borderFrame);
